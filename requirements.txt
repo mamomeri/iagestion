@@ -3,10 +3,13 @@ uvicorn
 pydantic-settings
 requests
 sounddevice
-torch
-sounddevice
+TTS
+soundfile
 scipy
-
+torch==2.1.2+cu118
+torchvision==0.16.2+cu118
+torchaudio==2.1.2+cu118
+--index-url https://download.pytorch.org/whl/cu118
 #pip install git+https://github.com/coqui-ai/TTS.git@dev
 # For TTS dependencies
 
