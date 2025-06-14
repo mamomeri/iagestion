@@ -115,6 +115,14 @@ with open("output.wav", "wb") as f:
 
 ---
 
+## 🧠 Arquitectura y Rol como Gestor
+
+Este proyecto **no es solo una API**, sino un **gestor modular de servicios de voz y lenguaje**, fácilmente ampliable con nuevas funcionalidades. Su diseño desacoplado permite integrar nuevos modelos o servicios sin alterar el núcleo de rutas.
+
+Cada módulo (STT, TTS, NLP, cálculo) es llamado de forma independiente a través de una **interfaz REST**, facilitando la integración con frontends web, asistentes virtuales o automatizaciones.
+
+---
+
 ## 🛠️ TODOs
 
 - [ ] Documentar uso de modelos múltiples
