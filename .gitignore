@@ -1,0 +1,24 @@
+# Entorno virtual
+venv/
+.env
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+*.log
+
+# Configuración de VSCode u otros IDEs
+.vscode/
+.idea/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de salida
+output.wav
+*.mp3
+*.wav
+
+# Modelos (opcional si no quieres subirlos)
+Models/

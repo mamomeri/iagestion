@@ -1,0 +1,20 @@
+fastapi
+uvicorn
+pydantic-settings
+requests
+sounddevice
+torch
+sounddevice
+scipy
+
+#pip install git+https://github.com/coqui-ai/TTS.git@dev
+# For TTS dependencies
+
+
+#Dejarlo como está, pero regenerar requirements.txt con solo lo que usas
+#Instala pipreqs:
+
+#pip install pipreqs
+#Regenera un requirements.txt solo con lo que realmente usas en el código fuente:
+
+#pipreqs . --force
