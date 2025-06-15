@@ -1,39 +1,27 @@
+# utils/audio_converter.py
+
 import os
+import librosa
 import soundfile as sf
-import numpy as np
-from scipy.io.wavfile import write as wav_write
-from scipy.signal import resample
 
-def convertir_a_wav_compatible(origen: str, destino: str = None):
+def convertir_a_wav(audio_path: str, destino_dir: str = "Data/audio_input") -> str:
     """
-    Convierte cualquier archivo de audio (WAV, MP3, FLAC...) a un WAV mono, 16kHz, int16.
-
+    Convierte cualquier archivo de audio a WAV mono 16kHz compatible con Whisper.cpp.
+    
     Args:
-        origen (str): Ruta del archivo original.
-        destino (str): Ruta del archivo convertido (opcional). Si no se especifica, se sobreescribe.
+        audio_path (str): Ruta al archivo original.
+        destino_dir (str): Directorio donde guardar el archivo convertido.
+
+    Returns:
+        str: Ruta al archivo WAV listo para transcripción.
     """
-    if not os.path.isfile(origen):
-        raise FileNotFoundError(f"Archivo no encontrado: {origen}")
+    nombre = os.path.splitext(os.path.basename(audio_path))[0]
+    destino_path = os.path.join(destino_dir, f"{nombre}_converted.wav")
 
-    data, sr = sf.read(origen)
-    destino = destino or os.path.splitext(origen)[0] + "_converted.wav"
+    # Cargar con librosa (convierte a float32 y permite re-samplear)
+    audio, sr = librosa.load(audio_path, sr=16000, mono=True)
 
-    # Convertir a mono si es estéreo
-    if data.ndim > 1:
-        data = np.mean(data, axis=1)
-
-    # Resamplear si no está en 16000 Hz
-    if sr != 16000:
-        num_samples = int(len(data) * 16000 / sr)
-        data = resample(data, num_samples)
-        sr = 16000
-
-    # Normalizar a rango [-1, 1] y convertir a int16
-    if data.dtype != np.int16:
-        data = data / np.max(np.abs(data)) if np.max(np.abs(data)) > 0 else data
-        data = np.int16(data * 32767)
-
-    # Guardar archivo WAV compatible
-    wav_write(destino, sr, data)
-    print(f"✅ Audio convertido a WAV compatible: {destino}")
-    return destino
+    # Guardar en el formato esperado
+    sf.write(destino_path, audio, 16000)
+    print(f"✅ Convertido a WAV compatible: {destino_path}")
+    return destino_path
