@@ -81,7 +81,7 @@ TRANSCRIPTION_DIR=./Data/transcriptions
 Ejecuta con:
 
 ```bash
-python main.py
+python start.py
 ```
 
 Esto lanza una API FastAPI + una prueba local de grabación/transcripción al micrófono si está configurado.

@@ -1,5 +1,4 @@
-# api/routes.py
-
+import os
 from fastapi import APIRouter
 from api.schemas import TranscribeRequest, TTSRequest, CalcRequest
 from services.transcriber import transcribe_audio
@@ -15,8 +14,13 @@ def transcribe(req: TranscribeRequest):
 
 @router.post("/speak")
 def speak(req: TTSRequest):
-    synthesize_text(req.text)
-    return {"status": "ok"}
+    folder = synthesize_text(req.text)
+    wav_files = sorted(f for f in os.listdir(folder) if f.endswith(".wav"))
+    return {
+        "status": "ok",
+        "output_folder": folder,
+        "files": wav_files
+    }
 
 @router.post("/calculate")
 def calculate(req: CalcRequest):
