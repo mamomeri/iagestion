@@ -25,18 +25,19 @@ app.add_middleware(
 
 # Borrar el contenido de Data/audio_output al iniciar la app
 @app.on_event("startup")
-def limpiar_audio_output():
-    output_dir = os.path.join("Data", "audio_output")
-    if os.path.exists(output_dir):
-        for archivo in os.listdir(output_dir):
-            archivo_path = os.path.join(output_dir, archivo)
-            try:
-                if os.path.isfile(archivo_path) or os.path.islink(archivo_path):
-                    os.unlink(archivo_path)
-                elif os.path.isdir(archivo_path):
-                    shutil.rmtree(archivo_path)
-            except Exception as e:
-                print(f"Error al eliminar {archivo_path}: {e}")
+def limpiar_directorios_audio():
+    directorios = [os.path.join("Data", "audio_output"), os.path.join("Data", "audio_input")]
+    for output_dir in directorios:
+        if os.path.exists(output_dir):
+            for archivo in os.listdir(output_dir):
+                archivo_path = os.path.join(output_dir, archivo)
+                try:
+                    if os.path.isfile(archivo_path) or os.path.islink(archivo_path):
+                        os.unlink(archivo_path)
+                    elif os.path.isdir(archivo_path):
+                        shutil.rmtree(archivo_path)
+                except Exception as e:
+                    print(f"Error al eliminar {archivo_path}: {e}")
 
 # Rutas
 app.include_router(router)
