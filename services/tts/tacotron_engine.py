@@ -7,43 +7,61 @@ import textwrap
 import time
 import simpleaudio as sa
 from datetime import datetime
-from speechbrain.inference.TTS import Tacotron2
-from speechbrain.inference.vocoders import HIFIGAN
+from TTS.utils.manage import ModelManager
+from TTS.utils.synthesizer import Synthesizer
+import re
+
 from config.settings import get_settings
 
-# Inicializa modelos Tacotron2 + HifiGAN
-tacotron = Tacotron2.from_hparams(
-    source="speechbrain/tts-tacotron2-ljspeech", 
-    savedir="tmp_tacotron2"
-)
-hifigan = HIFIGAN.from_hparams(
-    source="speechbrain/tts-hifigan-ljspeech", 
-    savedir="tmp_hifigan"
-)
-
+# Configuración
 settings = get_settings()
 
-def dividir_texto(texto, max_chars=20):
-    return textwrap.wrap(texto, width=max_chars, break_long_words=True)
+tts_dir = os.path.join(settings.tts_model_path, "tacotron2_es")
+os.makedirs(tts_dir, exist_ok=True)
 
-def synthesize_text(text: str, language: str = "en", reproducir: bool = True):
+# Descargar modelo español (público y sin autenticación)
+manager = ModelManager()
+model_path, config_path, model_item = manager.download_model("tts_models/es/mai/tacotron2-DDC")
+
+# Inicializar el sintetizador
+synthesizer = Synthesizer(
+    tts_checkpoint=model_path,
+    tts_config_path=config_path,
+    use_cuda=torch.cuda.is_available(),
+)
+
+# Fragmentador de texto
+def dividir_texto(texto, max_chars=110):
+    return textwrap.wrap(texto, width=max_chars, break_long_words=False)
+
+
+
+def limpiar_texto(texto: str) -> str:
+    # Solo permite letras (incluyendo tildes y ñ), números, espacios y signos básicos
+    texto_limpio = re.sub(r"[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ0-9,.¡!¿? \n]", "", texto)
+    return texto_limpio
+
+def synthesize_text(text: str, language: str = "es", reproducir: bool = True):
+    # Limpiar texto antes de procesarlo
+    texto = limpiar_texto(text)
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    folder = os.path.join("Data", "audio_output", f"tts_tacotron_{timestamp}")
-    os.makedirs(folder, exist_ok=True)
+    folder_name = os.path.join("Data", "audio_output", f"tacotron_{timestamp}")
+    os.makedirs(folder_name, exist_ok=True)
 
-    fragmentos = dividir_texto(text)
+    fragmentos = dividir_texto(texto)
     archivos = []
 
-    for i, frag in enumerate(fragmentos):
-        mel_output, mel_len, align = tacotron.encode_text([frag])
-        wav = hifigan.decode_batch(mel_output).squeeze(1).cpu().numpy()
-
-        fname = os.path.join(folder, f"{i+1:05}.wav")
-        sf.write(fname, wav, samplerate=22050)
-        archivos.append(fname)
+    for i, fragmento in enumerate(fragmentos):
+        wav = synthesizer.tts(fragmento)
+        nombre_archivo = os.path.join(folder_name, f"{i+1:05}.wav")
+        sf.write(nombre_archivo, wav, 22050)
+        archivos.append(nombre_archivo)
 
         if reproducir:
-            wave_obj = sa.WaveObject.from_wave_file(fname)
-            play = wave_obj.play(); play.wait_done(); time.sleep(0.1)
+            wave_obj = sa.WaveObject.from_wave_file(nombre_archivo)
+            play_obj = wave_obj.play()
+            play_obj.wait_done()
+            time.sleep(0.2)
 
-    return folder
+    return folder_name

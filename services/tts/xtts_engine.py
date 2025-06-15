@@ -15,8 +15,8 @@ from config.settings import get_settings
 settings = get_settings()
 
 # Configuración del modelo
-config_path = os.path.join(settings.tts_model_path, "config.json")
-checkpoint_dir = settings.tts_model_path
+config_path = os.path.join(settings.tts_model_path+"\\tts\\XTTS-V2", "config.json")
+checkpoint_dir = settings.tts_model_path+"\\tts\\XTTS-V2"
 
 # Preparar modelo
 config = XttsConfig()
@@ -26,7 +26,7 @@ model.load_checkpoint(config, checkpoint_dir=checkpoint_dir, eval=True)
 model.to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
 # Fragmentador de texto
-def dividir_texto(texto, max_chars=110):
+def dividir_texto(texto, max_chars=210):
     return textwrap.wrap(texto, width=max_chars, break_long_words=False)
 
 def synthesize_text(text: str, language: str = "es", reproducir: bool = True):
@@ -38,7 +38,7 @@ def synthesize_text(text: str, language: str = "es", reproducir: bool = True):
     if not os.path.isfile(speaker_path):
         raise FileNotFoundError(f"No se encontró el archivo speaker.wav en: {speaker_path}")
 
-    fragmentos = dividir_texto(text, max_chars=30)
+    fragmentos = dividir_texto(text, max_chars=110)
     archivos = []
 
     for i, fragmento in enumerate(fragmentos):
