@@ -23,10 +23,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Borrar el contenido de Data/audio_output al iniciar la app
+# Borrar el contenido de Data/audio_output al iniciar la app 
 @app.on_event("startup")
 def limpiar_directorios_audio():
-    directorios = [os.path.join("Data", "audio_output"), os.path.join("Data", "audio_input")]
+    directorios = [os.path.join("Data", "audio_output"), os.path.join("Data", "audio_input"), os.path.join("Data", "transcripts")]
     for output_dir in directorios:
         if os.path.exists(output_dir):
             for archivo in os.listdir(output_dir):
