@@ -1,8 +1,9 @@
+# ruta: api/routes.py
 import os
 from fastapi import APIRouter
 from api.schemas import TranscribeRequest, TTSRequest, CalcRequest
 from services.transcriber import transcribe_audio
-from services.tts import synthesize_text
+from services.tts import synthesize_text  # ✅ Solo desde aquí
 from services.calculator import evaluate_expression
 from services.lms_client import chat_with_lms
 
@@ -24,8 +25,7 @@ def speak(req: TTSRequest):
 
 @router.post("/calculate")
 def calculate(req: CalcRequest):
-    result = evaluate_expression(req.expression)
-    return {"result": result}
+    return {"result": evaluate_expression(req.expression)}
 
 @router.post("/chat")
 def chat(req: TTSRequest):
