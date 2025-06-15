@@ -7,7 +7,7 @@ import simpleaudio as sa
 from datetime import datetime
 from TTS.utils.manage import ModelManager
 from TTS.utils.synthesizer import Synthesizer
-
+import re
 from config.settings import get_settings
 
 # Configuración general
@@ -27,9 +27,37 @@ synthesizer = Synthesizer(
     use_cuda=torch.cuda.is_available(),
 )
 
-# Fragmentador de texto
-def dividir_texto(texto, max_chars=110):
-    return textwrap.wrap(texto, width=max_chars, break_long_words=False)
+
+
+
+def dividir_texto(texto, max_chars=100):
+    # 1. Separa por signos de puntuación fuertes manteniéndolos
+    partes = re.split(r'(?<=[\.\,\;\:\?\!])\s*', texto)
+
+    fragmentos = []
+    buffer = ""
+
+    for parte in partes:
+        if len(buffer) + len(parte) <= max_chars:
+            buffer += parte + " "
+        else:
+            if buffer:
+                fragmentos.append(buffer.strip() + "  h")
+            if len(parte) > max_chars:
+                # Si la parte sigue siendo muy larga, divídela forzadamente
+                subpartes = textwrap.wrap(parte, width=max_chars, break_long_words=False)
+                for sub in subpartes:
+                    fragmentos.append(sub.strip() + "  h")
+                buffer = ""
+            else:
+                buffer = parte + " "
+
+    if buffer:
+        fragmentos.append(buffer.strip() + "  h")
+
+    return fragmentos
+
+
 
 # Función principal
 def synthesize_text(text: str, language: str = "es", reproducir: bool = True):
