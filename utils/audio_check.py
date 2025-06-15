@@ -4,7 +4,7 @@ import os
 import soundfile as sf
 import librosa
 
-AUDIO_INPUT_DIR = "Data/audio_input"
+AUDIO_INPUT_DIR = "../Data/audio_input"
 
 def verificar_y_convertir_audios(sobrescribir: bool = True):
     for archivo in os.listdir(AUDIO_INPUT_DIR):
