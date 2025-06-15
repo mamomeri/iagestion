@@ -1,24 +1,22 @@
-
 import subprocess
 import os
 from config.settings import get_settings
-from utils.audio_converter import convertir_a_wav
+from utils.audio_converter import convertir_a_wav  # ⬅️ Importar aquí
 
 settings = get_settings()
 
 def transcribe_audio(audio_path: str) -> str:
     """
     Ejecuta whisper.cpp desde línea de comandos para transcribir un archivo de audio.
-    Convierte automáticamente a WAV compatible si es necesario.
     """
+
+    # 🔄 Asegurar compatibilidad para whisper (mono, 16kHz, WAV)
+    wav_path = convertir_a_wav(audio_path)
+
     whisper_exe = settings.whisper_path
     model_path = settings.whisper_model
     output_dir = settings.transcription_dir
-
     os.makedirs(output_dir, exist_ok=True)
-
-    # Asegurar compatibilidad
-    wav_path = convertir_a_wav(audio_path)
 
     command = [
         whisper_exe,
@@ -33,8 +31,7 @@ def transcribe_audio(audio_path: str) -> str:
 
     if result.returncode != 0:
         print("❌ Error en whisper:")
-        print("STDERR:\n", result.stderr)
-        print("STDOUT:\n", result.stdout)
+        print(result.stderr)
         raise RuntimeError("Whisper.cpp falló.")
 
     transcript_path = os.path.join(output_dir, "transcription.txt")
