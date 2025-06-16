@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+pydantic-settings
+requests
+sounddevice
+soundfile
+scipy
+TTS
+torch==2.1.2+cu118
+torchvision==0.16.2+cu118
+torchaudio==2.1.2+cu118
+transformers==4.38.2
+--extra-index-url https://download.pytorch.org/whl/cu118
+simpleaudio
+speechbrain>=0.5.0
+librosa
+wx

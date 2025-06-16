@@ -1,0 +1,29 @@
+# Entorno virtual
+venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+*.log
+
+# Configuración de IDEs
+.vscode/
+.idea/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos pesados generados
+output.wav
+*.mp3
+*.wav
+
+# EXCEPCIONES explícitas (se suben aunque terminen en .wav)
+!Data/audio_input/speaker.wav
+!services/utils/media/audio/SystemAlready.wav
+!services/utils/media/audio/UserStartToSpeak.wav
+!services/utils/media/audio/UserStopSpeak.wav
+
+# Modelos grandes
+Models/

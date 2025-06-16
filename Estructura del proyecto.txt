@@ -1,0 +1,39 @@
+# Esta es la estructura final organizada del proyecto
+# Archivos principales
+main.py                  # Entrada principal de la app (API y pruebas)
+README.md               # Documentación de uso
+requirements.txt        # Dependencias del entorno
+
+# Módulos funcionales
+api/
+    routes.py           # Endpoints de FastAPI
+    schemas.py          # Esquemas de pydantic para solicitudes/respuestas
+    __init__.py
+
+config/
+    .env                # Variables de entorno
+    settings.py         # Carga de configuración con pydantic
+    __init__.py
+
+Data/
+    audio_input/        # Audios grabados desde micro
+    audio_output/       # Audios sintetizados (TTS)
+    transcriptions/     # Archivos .txt con transcripciones
+
+Models/
+    tts/Models/         # Carpeta donde irá el modelo xtts_v2
+    whisper/            # Binarios y ejecutables de whisper.cpp
+        ggml-large-v3-turbo-q8_0.bin
+        Release/
+            main.exe
+            whisper-*.exe
+            *.dll
+
+services/
+    calculator.py       # Servicio para evaluar expresiones matemáticas
+    lms_client.py       # Cliente HTTP para LM Studio u Ollama
+    transcriber.py      # Uso de whisper.cpp
+    tts.py              # Uso de Coqui TTS
+
+utils/
+    audio.py            # Funciones de audio (grabar, guardar, etc.)
